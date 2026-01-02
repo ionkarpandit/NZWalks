@@ -1,3 +1,5 @@
+// Reference: Udemy Course: Build ASP>NET Core Web API - Scratch To Finish (.NET8 API)
+
 using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Mappings;
