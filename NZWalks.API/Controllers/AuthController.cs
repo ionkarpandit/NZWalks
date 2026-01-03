@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Models.DTO;
+using NZWalks.API.Repositories;
 
 namespace NZWalks.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace NZWalks.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         // POST: api/auth/Register
@@ -51,20 +54,30 @@ namespace NZWalks.API.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
-            var identityUser = await userManager.FindByEmailAsync(loginRequestDto.UserName);
-            if (identityUser != null)
+            var User = await userManager.FindByEmailAsync(loginRequestDto.UserName);
+            if (User != null)
             {
-                var isPasswordValid = await userManager.CheckPasswordAsync(identityUser, loginRequestDto.Password);
+                var isPasswordValid = await userManager.CheckPasswordAsync(User, loginRequestDto.Password);
 
                 if (isPasswordValid)
                 {
-                    // Create JWT Token and return
+                    // Get User Roles
+                    var userRoles = await userManager.GetRolesAsync(User);
 
-                    return Ok("Login successful.");
+                    if(userRoles != null && userRoles.Any())
+                    {
+                        // Create JWT Token and return
+                        var jwtToken = tokenRepository.CreateJWTToken(User, userRoles.ToList());
+
+                        var response = new LoginResponseDto
+                        {
+                            JwtToken = jwtToken
+                        };
+
+                        return Ok(response);
+                    }
                 }
             }
-
-
             return BadRequest("Invalid username or password.");
         }
 
