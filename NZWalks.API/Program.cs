@@ -1,9 +1,12 @@
-// Reference: Udemy Course: Build ASP>NET Core Web API - Scratch To Finish (.NET8 API)
+// Reference: Udemy Course: Build ASP.NET Core Web API - Scratch To Finish (.NET8 API)
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NZWalks.API.Data;
 using NZWalks.API.Mappings;
 using NZWalks.API.Repositories;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +23,27 @@ builder.Services.AddDbContext<NZWalksDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("NZWalksConnectionString"));
 });
 
+// Configure Dependency Injection for Repositories
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 
+// AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+// JWT Authentication Configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        });
 
 var app = builder.Build();
 
@@ -36,6 +56,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // JWT Authentication Configuration: Add Authentication Middleware
 app.UseAuthorization();
 
 app.MapControllers();
