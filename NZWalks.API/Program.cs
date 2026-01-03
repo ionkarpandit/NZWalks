@@ -19,9 +19,11 @@ builder.Services.AddSwaggerGen();
 
 // Configure the DbContext with PostgreSQL database connection
 builder.Services.AddDbContext<NZWalksDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("NZWalksConnectionString"));
-});
+    options.UseNpgsql(builder.Configuration.GetConnectionString("NZWalksConnectionString")));
+
+// Configure the Auth DbContext with PostgreSQL database connection
+builder.Services.AddDbContext<NZWalksAuthDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("NZWalksAuthConnectionString")));
 
 // Configure Dependency Injection for Repositories
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
