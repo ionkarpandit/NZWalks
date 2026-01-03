@@ -45,5 +45,29 @@ namespace NZWalks.API.Controllers
 
             return BadRequest("User registration failed. Please try again.");
         }
+
+        // POST: api/auth/Login
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var identityUser = await userManager.FindByEmailAsync(loginRequestDto.UserName);
+            if (identityUser != null)
+            {
+                var isPasswordValid = await userManager.CheckPasswordAsync(identityUser, loginRequestDto.Password);
+
+                if (isPasswordValid)
+                {
+                    // Create JWT Token and return
+
+                    return Ok("Login successful.");
+                }
+            }
+
+
+            return BadRequest("Invalid username or password.");
+        }
+
+
     }
 }
