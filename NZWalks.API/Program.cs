@@ -1,6 +1,7 @@
 // Reference: Udemy Course: Build ASP.NET Core Web API - Scratch To Finish (.NET8 API)
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NZWalks.API.Data;
@@ -31,6 +32,25 @@ builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+// Identity Configuration
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("NZWalks")
+    .AddEntityFrameworkStores<NZWalksAuthDbContext>()
+    .AddDefaultTokenProviders();
+
+// Identity Options Configuration
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 10;
+    options.Password.RequiredUniqueChars = 1;
+    //options.User.RequireUniqueEmail = true;
+});
 
 // JWT Authentication Configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
