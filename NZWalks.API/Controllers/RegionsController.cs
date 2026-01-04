@@ -13,7 +13,6 @@ namespace NZWalks.API.Controllers
     // https://localhost:1234/api/regions
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly NZWalksDbContext dbContext;
@@ -31,6 +30,7 @@ namespace NZWalks.API.Controllers
         // GET ALL Regions
         // GET: https://localhost:portnumber/api/regions
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
             //// HardCoded list of regions - temporary code before we connect to the database
@@ -91,6 +91,7 @@ namespace NZWalks.API.Controllers
         // GET: https://localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             ////var region = dbContext.Regions.Find(id);    // Option 1: Find is another way to get by only "primary key"
@@ -125,6 +126,7 @@ namespace NZWalks.API.Controllers
         // POST: https://localhost:portnumber/api/regions
         [HttpPost]
         [ValidateModel]    // Custom Server-side validation
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //// Map DTO to Domain Model
@@ -177,6 +179,7 @@ namespace NZWalks.API.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             // Check if region exists in the database
@@ -235,6 +238,7 @@ namespace NZWalks.API.Controllers
         // DELETE: https://localhost:portnumber/api/regions/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             // Check if region exists in the database
