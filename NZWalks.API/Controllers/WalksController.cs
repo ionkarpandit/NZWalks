@@ -12,7 +12,7 @@ namespace NZWalks.API.Controllers
     // api/walks
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class WalksController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -45,6 +45,9 @@ namespace NZWalks.API.Controllers
             [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             var walksDomainModel = await walkRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
+
+            ////// Create an exception
+            ////throw new Exception("This is a test exception");
 
             // Map domain model to DTO
             var walksDto = mapper.Map<List<WalkDto>>(walksDomainModel);
