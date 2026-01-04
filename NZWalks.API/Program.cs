@@ -17,9 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Serilog Configuration
 var logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    ////.MinimumLevel.Information()
-    .MinimumLevel.Warning()
+    .WriteTo.Console()  // Log to console
+    .WriteTo.File("Logs/NZWalks_log.txt", rollingInterval: RollingInterval.Day) // Log file per day
+    //.MinimumLevel.Information()   // Set minimum log level to Information
+    .MinimumLevel.Warning()         // Set minimum log level to Warning
     .CreateLogger();
 
 builder.Logging.ClearProviders();
