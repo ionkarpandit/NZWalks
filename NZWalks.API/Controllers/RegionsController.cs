@@ -18,13 +18,17 @@ namespace NZWalks.API.Controllers
         private readonly NZWalksDbContext dbContext;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(NZWalksDbContext dbContext, IRegionRepository regionRepository,
-            IMapper mapper)
+        public RegionsController(NZWalksDbContext dbContext, 
+            IRegionRepository regionRepository,
+            IMapper mapper,
+            ILogger<RegionsController> logger)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         // GET ALL Regions
@@ -33,6 +37,10 @@ namespace NZWalks.API.Controllers
         [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
+            ////logger.LogInformation("GetAll Regions action method invoked");  // Log Information
+            ////logger.LogWarning("This is a warning log for GetAll Regions");  // Log Warning
+            ////logger.LogError("This is an error log for GetAll Regions");     // Log Error
+
             //// HardCoded list of regions - temporary code before we connect to the database
             ////var regions = new List<Region>
             ////{
