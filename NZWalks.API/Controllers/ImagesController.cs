@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
+using NZWalks.API.Repositories;
 
 namespace NZWalks.API.Controllers
 {
@@ -8,6 +9,13 @@ namespace NZWalks.API.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        private readonly IImageRepository imageRepository;
+
+        public ImagesController(IImageRepository imageRepository)
+        {
+            this.imageRepository = imageRepository;
+        }
+
         // POST: api/images
         [HttpPost]
         [Route("Upload")]
@@ -17,7 +25,21 @@ namespace NZWalks.API.Controllers
 
             if (ModelState.IsValid)
             {
-                // Simulate file saving process
+                // Convert DTO to domain model
+                var imageDomainModel = new Image
+                {
+                    File = imageUploadRequestDto.File,
+                    FileName = imageUploadRequestDto.FileName,
+                    FileDescription = imageUploadRequestDto.FileDescription,
+                    FileExtension = Path.GetExtension(imageUploadRequestDto.File.FileName),
+                    FileSizeInBytes = imageUploadRequestDto.File.Length,
+                    // In a real application, you would save the file to a storage location and set the FilePath accordingly
+                    //FilePath = Path.Combine("Images", imageUploadRequestDto.FileName + Path.GetExtension(imageUploadRequestDto.File.FileName))
+                };
+
+                await imageRepository.Upload(imageDomainModel);
+
+                return Ok(imageDomainModel);
             }
 
             return BadRequest(ModelState);
