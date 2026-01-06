@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NZWalks.API.Data;
@@ -139,6 +140,14 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication(); // JWT Authentication Configuration: Add Authentication Middleware
 app.UseAuthorization();
+
+// To serve static files from wwwroot folder, like images
+app.UseStaticFiles(new StaticFileOptions
+{
+    // Serve files from "Images" folder
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
 
 app.MapControllers();
 
