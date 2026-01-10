@@ -81,5 +81,23 @@ namespace NZWalks.UI.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            ////ViewBag.Id = id;
+
+            var client = httpClientFactory.CreateClient();
+
+            var response = await client.GetFromJsonAsync<RegionDto>($"https://localhost:7133/api/regions/{id.ToString()}");
+
+            if (response is not null)
+            {
+                return View(response);
+            }
+
+            return View(null);
+        }
+
+
     }
 }

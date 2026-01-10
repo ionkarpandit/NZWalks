@@ -1,0 +1,36 @@
+﻿@model NZWalks.UI.Models.DTO.RegionDto
+
+<h1 class="mt-3">Edit</h1>
+
+@* <p>
+    @ViewBag.Id
+</p> *@
+
+@if (Model is not null)
+{
+    <form asp-controller="Regions" asp-action="Add" method="post" class="mt-3">
+
+        <div class="form-group mb-3">
+            <label for="Code">Id</label>
+            <input type="text" class="form-control" asp-for="Id" readonly />
+        </div>
+       
+        <div class="form-group mb-3">
+            <label for="Code">Code</label>
+            <input type="text" class="form-control" asp-for="Code" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Name">Name</label>
+            <input type="text" class="form-control" asp-for="Name" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="Name">Image URL</label>
+            <input type="text" class="form-control" asp-for="RegionImageUrl" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </form>
+}
