@@ -86,6 +86,7 @@ builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IImageRepository, LocalImageRepository>();
+builder.Services.AddTransient<ExceptionHanderMiddleware>(); // IMiddleware is an alternate way of RequestDelagate
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
