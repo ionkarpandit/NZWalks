@@ -1,20 +1,50 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace NZWalks.API.Middlewares
 {
-    public class ExceptionHanderMiddleware
+    public class ExceptionHanderMiddleware : IMiddleware    // IMiddleware is an alternate way of RequestDelagate
     {
         private readonly ILogger<ExceptionHanderMiddleware> logger;
-        private readonly RequestDelegate next;
+        //private readonly RequestDelegate next;
 
-        public ExceptionHanderMiddleware(ILogger<ExceptionHanderMiddleware> logger,
-            RequestDelegate next) // RequestDelegate represents the next middleware in the pipeline
+        public ExceptionHanderMiddleware(ILogger<ExceptionHanderMiddleware> logger
+            //,RequestDelegate next
+            ) // RequestDelegate represents the next middleware in the pipeline
         {
             this.logger = logger;
-            this.next = next;
+            // this.next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext)
+        ////public async Task InvokeAsync(HttpContext httpContext)
+        ////{
+        ////    try
+        ////    {
+        ////        // Call the next middleware in the pipeline
+        ////        await next(httpContext);
+        ////    }
+        ////    catch (Exception ex)
+        ////    {
+        ////        var errorId = Guid.NewGuid();
+
+        ////        // Log the exception
+        ////        logger.LogError(ex, $"{errorId} : {ex.Message}" );
+
+        ////        // Return a generic error response
+        ////        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // Internal Server Error
+        ////        httpContext.Response.ContentType = "application/json";
+
+        ////        var response = new
+        ////        {
+        ////            Id = errorId,
+        ////            ErrorMessage = "An unexpected error occurred. Please try again later."
+        ////        };
+
+        ////        await httpContext.Response.WriteAsJsonAsync(response);
+        ////    }
+        ////}
+
+        public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
         {
             try
             {
@@ -26,7 +56,7 @@ namespace NZWalks.API.Middlewares
                 var errorId = Guid.NewGuid();
 
                 // Log the exception
-                logger.LogError(ex, $"{errorId} : {ex.Message}" );
+                logger.LogError(ex, $"{errorId} : {ex.Message}");
 
                 // Return a generic error response
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // Internal Server Error
@@ -41,6 +71,5 @@ namespace NZWalks.API.Middlewares
                 await httpContext.Response.WriteAsJsonAsync(response);
             }
         }
-
     }
 }
